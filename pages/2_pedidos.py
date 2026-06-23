@@ -26,7 +26,11 @@ sidebar_admin_status()
 
 st.title("Gestao de Pedidos")
 
-tab_novo, tab_abertos = st.tabs(["Abrir novo pedido", "Pedidos em aberto"])
+pedido_foco = st.session_state.get("pedido_foco")
+if pedido_foco:
+    tab_abertos, tab_novo = st.tabs(["Pedidos em aberto", "Abrir novo pedido"])
+else:
+    tab_novo, tab_abertos = st.tabs(["Abrir novo pedido", "Pedidos em aberto"])
 
 with tab_novo:
     st.markdown("#### Abrir pedido para uma mesa")
@@ -54,6 +58,7 @@ with tab_novo:
                 mesa_id = next(mesa["id"] for mesa in mesas if mesa["numero"] == mesa_num)
                 try:
                     pedido_id = abrir_pedido(mesa_id)
+                    st.session_state["pedido_foco"] = pedido_id
                     st.success(f"Pedido aberto para a Mesa {mesa_num}. ID #{pedido_id}.")
                     st.rerun()
                 except ValueError as exc:
@@ -80,7 +85,7 @@ with tab_abertos:
             subtotal = float(pedido["subtotal"])
 
             titulo = f"Mesa {mesa} - aberta as {hora} - subtotal R$ {subtotal:.2f}"
-            with st.expander(titulo, expanded=False):
+            with st.expander(titulo, expanded=pedido_id == pedido_foco):
                 itens = listar_itens_pedido(pedido_id)
 
                 if itens:
@@ -148,6 +153,8 @@ with tab_abertos:
                     else:
                         try:
                             fechar_pedido(pedido_id, forma, desconto)
+                            if pedido_id == st.session_state.get("pedido_foco"):
+                                st.session_state.pop("pedido_foco", None)
                             st.success(
                                 f"Pedido da Mesa {mesa} fechado. "
                                 f"Total: R$ {max(total - desconto, 0):.2f}"
@@ -159,6 +166,8 @@ with tab_abertos:
                 if cancelar:
                     try:
                         cancelar_pedido(pedido_id)
+                        if pedido_id == st.session_state.get("pedido_foco"):
+                            st.session_state.pop("pedido_foco", None)
                         st.warning(f"Pedido da Mesa {mesa} cancelado.")
                         st.rerun()
                     except ValueError as exc:

@@ -91,6 +91,33 @@ def listar_mesas():
             return cur.fetchall()
 
 
+def listar_mesas_salao():
+    """Retorna as mesas com um resumo da comanda aberta, quando existir."""
+    with get_connection() as conn:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(
+                """
+                SELECT
+                    m.id,
+                    m.numero,
+                    m.ativa,
+                    m.status,
+                    p.id AS pedido_id,
+                    p.aberto_em,
+                    COALESCE(SUM(pi.quantidade), 0)::INTEGER AS quantidade_itens,
+                    COALESCE(SUM(pi.quantidade * pi.preco_unit), 0) AS subtotal
+                FROM mesas m
+                LEFT JOIN pedidos p
+                    ON p.mesa_id = m.id
+                   AND p.status = 'aberto'
+                LEFT JOIN pedido_itens pi ON pi.pedido_id = p.id
+                GROUP BY m.id, m.numero, m.ativa, m.status, p.id, p.aberto_em
+                ORDER BY m.numero
+                """
+            )
+            return cur.fetchall()
+
+
 def criar_mesa(numero: int):
     with get_connection() as conn:
         with conn.cursor() as cur:
@@ -173,8 +200,8 @@ def abrir_pedido(mesa_id: int):
                 raise ValueError("Mesa nao encontrada.")
             if not mesa[1]:
                 raise ValueError("Mesa inativa.")
-            if mesa[0] != "livre":
-                raise ValueError("Mesa nao esta livre para abertura de pedido.")
+            if mesa[0] not in ("livre", "reservada"):
+                raise ValueError("Mesa nao esta disponivel para abertura de pedido.")
 
             cur.execute(
                 "SELECT id FROM pedidos WHERE mesa_id = %s AND status = 'aberto'",
@@ -191,6 +218,37 @@ def abrir_pedido(mesa_id: int):
             cur.execute("UPDATE mesas SET status = 'ocupada' WHERE id = %s", (mesa_id,))
             conn.commit()
             return pedido_id
+
+
+def solicitar_fechamento(pedido_id: int):
+    with get_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT mesa_id
+                FROM pedidos
+                WHERE id = %s
+                  AND status = 'aberto'
+                FOR UPDATE
+                """,
+                (pedido_id,),
+            )
+            pedido = cur.fetchone()
+            if not pedido:
+                raise ValueError("Pedido nao encontrado ou ja finalizado.")
+
+            cur.execute(
+                """
+                UPDATE mesas
+                SET status = 'aguardando_pagamento'
+                WHERE id = %s
+                  AND status = 'ocupada'
+                """,
+                (pedido[0],),
+            )
+            if cur.rowcount != 1:
+                raise ValueError("A mesa nao esta ocupada ou ja aguarda pagamento.")
+            conn.commit()
 
 
 def adicionar_item(pedido_id, cardapio_id, quantidade, preco_unit, observacao=""):

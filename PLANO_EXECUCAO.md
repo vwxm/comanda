@@ -81,21 +81,21 @@ Objetivo: transformar a gestao de mesas em uma experiencia visual e operacional.
 
 Tarefas:
 
-- [ ] Criar tela principal de salao.
-- [ ] Mostrar mesas em grid visual.
-- [ ] Aplicar cores por status.
-- [ ] Exibir numero da mesa.
-- [ ] Exibir status da mesa.
-- [ ] Exibir total atual da comanda.
-- [ ] Exibir tempo desde abertura do pedido.
-- [ ] Exibir quantidade de itens.
-- [ ] Permitir clicar na mesa para abrir/ver comanda.
-- [ ] Adicionar acoes rapidas:
-  - [ ] Abrir pedido.
-  - [ ] Adicionar item.
-  - [ ] Fechar conta.
-  - [ ] Reservar mesa.
-  - [ ] Liberar mesa.
+- [x] Criar tela principal de salao.
+- [x] Mostrar mesas em grid visual.
+- [x] Aplicar cores por status.
+- [x] Exibir numero da mesa.
+- [x] Exibir status da mesa.
+- [x] Exibir total atual da comanda.
+- [x] Exibir tempo desde abertura do pedido.
+- [x] Exibir quantidade de itens.
+- [x] Permitir clicar na mesa para abrir/ver comanda.
+- [x] Adicionar acoes rapidas:
+  - [x] Abrir pedido.
+  - [x] Adicionar item.
+  - [x] Fechar conta.
+  - [x] Reservar mesa.
+  - [x] Liberar mesa.
 - [ ] Melhorar layout para uso em tablet/celular.
 
 ## Fase 4 - Fluxo de Comanda
