@@ -59,21 +59,20 @@ Com o tempo, o ecossistema podera incluir:
 
 ```text
 .
-+-- Gestao.py / Gestao.py com acento  # Dashboard principal de metricas
-+-- auth.py                           # Autenticacao simples de admin e estilo da sidebar
-+-- crud.py                           # Operacoes de leitura/escrita no banco
-+-- database.py                       # Conexao PostgreSQL e queries de metricas
-+-- schema.sql                        # Estrutura inicial do banco e dados de exemplo
-+-- requirements.txt                  # Dependencias Python
-+-- .env.example                      # Exemplo de configuracao local
-+-- logo.svg                          # Logo usado na interface
++-- app.py                 # Dashboard principal de metricas
++-- auth.py                # Autenticacao simples de admin e estilo da sidebar
++-- crud.py                # Operacoes de leitura/escrita no banco
++-- database.py            # Conexao PostgreSQL e queries de metricas
++-- schema.sql             # Estrutura inicial do banco e dados de exemplo
++-- requirements.txt       # Dependencias Python
++-- .env.example           # Exemplo de configuracao local
++-- logo.svg               # Logo usado na interface
++-- PLANO_EXECUCAO.md      # Plano interno de evolucao
 +-- pages/
-    +-- 1_Cardapio.py                 # Gestao de produtos e categorias
-    +-- 2_Pedidos.py                  # Abertura, itens e fechamento de pedidos
-    +-- 3_Mesas.py                    # Cadastro e status visual das mesas
+    +-- 1_cardapio.py      # Gestao de produtos e categorias
+    +-- 2_pedidos.py       # Abertura, itens e fechamento de pedidos
+    +-- 3_mesas.py         # Cadastro e status visual das mesas
 ```
-
-> Observacao: alguns arquivos atuais possuem acentos e emojis no nome. Em alguns ambientes, pode ser melhor renomear futuramente para `app.py`, `gestao.py`, `pages/1_cardapio.py`, `pages/2_pedidos.py` e `pages/3_mesas.py` para evitar problemas de compatibilidade.
 
 ## Modelo de Dados Atual
 
@@ -151,7 +150,7 @@ psql -U postgres -d restaurante -f schema.sql
 ### 5. Rodar o app
 
 ```bash
-streamlit run Gestão.py
+streamlit run app.py
 ```
 
 Depois acesse:
@@ -215,11 +214,11 @@ Para o prototipo, Streamlit atende bem porque permite evoluir rapido.
 
 Para uma versao mais robusta e usada por varios usuarios ao mesmo tempo, a stack provavel sera:
 
-- Frontend: React ou Next.js
-- Backend: FastAPI
-- Banco: PostgreSQL
-- Atualizacao em tempo real: WebSockets ou recurso similar
-- Autenticacao com perfis e permissoes
+- Frontend: React ou Next.js.
+- Backend: FastAPI.
+- Banco: PostgreSQL.
+- Atualizacao em tempo real: WebSockets ou recurso similar.
+- Autenticacao com perfis e permissoes.
 
 Essa decisao ainda sera tomada conforme o produto evoluir.
 

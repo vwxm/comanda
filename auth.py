@@ -1,16 +1,17 @@
 """
-auth.py — Autenticação de admin e estilo da sidebar
+auth.py - Autenticacao simples de admin e estilo da sidebar.
 """
-import streamlit as st
 import hashlib
 import os
+
+import streamlit as st
 from dotenv import load_dotenv
 
 load_dotenv()
 
 ADMIN_PASSWORD_HASH = os.getenv(
     "ADMIN_PASSWORD_HASH",
-    hashlib.sha256("admin123".encode()).hexdigest()
+    hashlib.sha256("admin123".encode()).hexdigest(),
 )
 
 _BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -22,11 +23,10 @@ def _hash(password: str) -> str:
 
 
 def sidebar_estilo():
-    # ── Logo no topo da sidebar (acima dos links de navegação) ──
     st.logo(_LOGO_PATH, size="large")
 
-    # ── CSS geral da sidebar ──
-    st.markdown("""
+    st.markdown(
+        """
     <style>
     [data-testid="stSidebar"] {
         background: #111827 !important;
@@ -34,7 +34,6 @@ def sidebar_estilo():
     }
     [data-testid="stSidebar"] * { color: #e5e7eb !important; }
 
-    /* Logo maior — seletor correto do Streamlit */
     [data-testid="stLogo"],
     [data-testid="stSidebarHeader"] img,
     [data-testid="stHeaderLogo"] img {
@@ -53,7 +52,6 @@ def sidebar_estilo():
         align-items: center !important;
     }
 
-    /* Label de seção */
     .sidebar-section {
         font-size: 13px !important;
         font-weight: 700 !important;
@@ -64,7 +62,6 @@ def sidebar_estilo():
         display: block;
     }
 
-    /* Links de navegação */
     [data-testid="stSidebarNav"] {
         padding-top: 0.5rem !important;
     }
@@ -81,7 +78,6 @@ def sidebar_estilo():
     [data-testid="stSidebarNav"] a:hover { background: #1f2937 !important; }
     [data-testid="stSidebarNav"] a[aria-selected="true"] { background: #1d4ed8 !important; }
 
-    /* Badge admin */
     .admin-badge {
         display: inline-flex;
         align-items: center;
@@ -95,7 +91,6 @@ def sidebar_estilo():
         margin: 0.25rem 0;
     }
 
-    /* Botão Sair — contraste corrigido */
     [data-testid="stSidebar"] button {
         background: #1f2937 !important;
         border: 1px solid #374151 !important;
@@ -113,7 +108,6 @@ def sidebar_estilo():
         color: #e5e7eb !important;
     }
 
-    /* Selectbox da sidebar — contraste */
     [data-testid="stSidebar"] [data-baseweb="select"] > div {
         background: #1f2937 !important;
         border-color: #374151 !important;
@@ -136,26 +130,28 @@ def sidebar_estilo():
         z-index: 998;
     }
     </style>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
 
 
 def sidebar_admin_status():
     if st.session_state.get("admin_logado"):
         st.sidebar.markdown(
-            '<hr class="sidebar-divider"><span class="sidebar-section">Administração</span>',
-            unsafe_allow_html=True
+            '<hr class="sidebar-divider"><span class="sidebar-section">Administracao</span>',
+            unsafe_allow_html=True,
         )
         st.sidebar.markdown(
-            '<div class="admin-badge">🔐 Admin logado</div>',
-            unsafe_allow_html=True
+            '<div class="admin-badge">Admin logado</div>',
+            unsafe_allow_html=True,
         )
         if st.sidebar.button("Sair", key="btn_logout"):
             st.session_state.admin_logado = False
             st.rerun()
 
     st.sidebar.markdown(
-        '<div class="sidebar-footer">Painel de Métricas v2.0</div>',
-        unsafe_allow_html=True
+        '<div class="sidebar-footer">Painel de Metricas v2.0</div>',
+        unsafe_allow_html=True,
     )
 
 
@@ -163,25 +159,28 @@ def requer_admin():
     if st.session_state.get("admin_logado"):
         return True
 
-    st.markdown("""
+    st.markdown(
+        """
     <div style='max-width:360px; margin:4rem auto; text-align:center;'>
-        <div style='font-size:48px; margin-bottom:1rem;'>🔐</div>
-        <h2 style='margin-bottom:0.25rem;'>Área restrita</h2>
+        <div style='font-size:48px; margin-bottom:1rem;'>Admin</div>
+        <h2 style='margin-bottom:0.25rem;'>Area restrita</h2>
         <p style='color:#6b7280; margin-bottom:2rem;'>
-            Esta seção é exclusiva para administradores.
+            Esta secao e exclusiva para administradores.
         </p>
     </div>
-    """, unsafe_allow_html=True)
+    """,
+        unsafe_allow_html=True,
+    )
 
     col = st.columns([1, 2, 1])[1]
     with col:
-        senha  = st.text_input("Senha de administrador", type="password", key="input_senha_admin")
+        senha = st.text_input("Senha de administrador", type="password", key="input_senha_admin")
         entrar = st.button("Entrar", use_container_width=True)
 
     if entrar:
         if _hash(senha) == ADMIN_PASSWORD_HASH:
             st.session_state.admin_logado = True
-            st.success("Acesso autorizado!")
+            st.success("Acesso autorizado.")
             st.rerun()
         else:
             st.error("Senha incorreta.")
