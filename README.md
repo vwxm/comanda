@@ -64,6 +64,7 @@ Com o tempo, o ecossistema podera incluir:
 +-- crud.py                # Operacoes de leitura/escrita no banco
 +-- database.py            # Conexao PostgreSQL e queries de metricas
 +-- schema.sql             # Estrutura inicial do banco e dados de exemplo
++-- migrations/            # Ajustes incrementais para bancos existentes
 +-- requirements.txt       # Dependencias Python
 +-- .env.example           # Exemplo de configuracao local
 +-- logo.svg               # Logo usado na interface
@@ -95,19 +96,19 @@ mesa -> pedido -> pedido_itens -> cardapio
 ### 1. Criar ambiente virtual
 
 ```bash
-python -m venv venv
+python -m venv .venv
 ```
 
 No Windows:
 
 ```bash
-venv\Scripts\activate
+.venv\Scripts\activate
 ```
 
 No Linux/Mac:
 
 ```bash
-source venv/bin/activate
+source .venv/bin/activate
 ```
 
 ### 2. Instalar dependencias
@@ -138,6 +139,7 @@ DB_PORT=5432
 DB_NAME=restaurante
 DB_USER=postgres
 DB_PASSWORD=sua_senha_aqui
+DB_CONNECT_TIMEOUT=5
 ```
 
 ### 4. Criar banco e aplicar schema
@@ -145,6 +147,12 @@ DB_PASSWORD=sua_senha_aqui
 ```bash
 psql -U postgres -c "CREATE DATABASE restaurante;"
 psql -U postgres -d restaurante -f schema.sql
+```
+
+Para atualizar um banco existente, aplique as migrations em ordem:
+
+```bash
+psql -U postgres -d restaurante -f migrations/001_comandas_status.sql
 ```
 
 ### 5. Rodar o app

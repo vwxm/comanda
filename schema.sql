@@ -21,7 +21,9 @@ CREATE TABLE IF NOT EXISTS cardapio (
 CREATE TABLE IF NOT EXISTS mesas (
     id      SERIAL PRIMARY KEY,
     numero  INT NOT NULL UNIQUE,
-    ativa   BOOLEAN DEFAULT TRUE
+    ativa   BOOLEAN DEFAULT TRUE,
+    status  VARCHAR(30) NOT NULL DEFAULT 'livre',
+    CHECK (status IN ('livre', 'ocupada', 'reservada', 'aguardando_pagamento', 'inativa'))
 );
 
 CREATE TABLE IF NOT EXISTS pedidos (
@@ -31,8 +33,11 @@ CREATE TABLE IF NOT EXISTS pedidos (
     fechado_em       TIMESTAMP,
     total            NUMERIC(10,2),
     desconto         NUMERIC(10,2) DEFAULT 0,
+    taxa_servico     NUMERIC(10,2) DEFAULT 0,
     forma_pagamento  VARCHAR(50),
-    status           VARCHAR(30) DEFAULT 'aberto'
+    observacao       TEXT,
+    status           VARCHAR(30) NOT NULL DEFAULT 'aberto',
+    CHECK (status IN ('aberto', 'fechado', 'cancelado'))
 );
 
 CREATE TABLE IF NOT EXISTS pedido_itens (
@@ -43,6 +48,21 @@ CREATE TABLE IF NOT EXISTS pedido_itens (
     preco_unit   NUMERIC(10,2) NOT NULL,
     observacao   TEXT
 );
+
+CREATE TABLE IF NOT EXISTS reservas (
+    id            SERIAL PRIMARY KEY,
+    mesa_id       INT NOT NULL REFERENCES mesas(id),
+    nome_cliente  VARCHAR(150) NOT NULL,
+    reservado_em  TIMESTAMP NOT NULL,
+    observacao    TEXT,
+    status        VARCHAR(30) NOT NULL DEFAULT 'ativa',
+    criado_em     TIMESTAMP NOT NULL DEFAULT NOW(),
+    CHECK (status IN ('ativa', 'concluida', 'cancelada'))
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_pedidos_mesa_aberta
+    ON pedidos (mesa_id)
+    WHERE status = 'aberto';
 
 -- ===========================================
 -- DADOS DE EXEMPLO

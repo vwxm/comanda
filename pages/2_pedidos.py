@@ -35,10 +35,8 @@ with tab_novo:
     if not mesas:
         st.warning("Nenhuma mesa cadastrada. Cadastre mesas primeiro.")
     else:
-        abertos = listar_pedidos_abertos()
-        mesas_ocupadas = {pedido["mesa"] for pedido in abertos}
         mesas_disponiveis = [
-            mesa for mesa in mesas if mesa["numero"] not in mesas_ocupadas and mesa["ativa"]
+            mesa for mesa in mesas if mesa["ativa"] and mesa["status"] == "livre"
         ]
 
         if not mesas_disponiveis:
@@ -54,9 +52,12 @@ with tab_novo:
 
             if abrir:
                 mesa_id = next(mesa["id"] for mesa in mesas if mesa["numero"] == mesa_num)
-                pedido_id = abrir_pedido(mesa_id)
-                st.success(f"Pedido aberto para a Mesa {mesa_num}. ID #{pedido_id}.")
-                st.rerun()
+                try:
+                    pedido_id = abrir_pedido(mesa_id)
+                    st.success(f"Pedido aberto para a Mesa {mesa_num}. ID #{pedido_id}.")
+                    st.rerun()
+                except ValueError as exc:
+                    st.error(str(exc))
 
 with tab_abertos:
     abertos = listar_pedidos_abertos()
@@ -145,11 +146,20 @@ with tab_abertos:
                     if not itens_atuais:
                         st.error("Adicione pelo menos um item antes de fechar.")
                     else:
-                        fechar_pedido(pedido_id, forma, desconto)
-                        st.success(f"Pedido da Mesa {mesa} fechado. Total: R$ {max(total - desconto, 0):.2f}")
-                        st.rerun()
+                        try:
+                            fechar_pedido(pedido_id, forma, desconto)
+                            st.success(
+                                f"Pedido da Mesa {mesa} fechado. "
+                                f"Total: R$ {max(total - desconto, 0):.2f}"
+                            )
+                            st.rerun()
+                        except ValueError as exc:
+                            st.error(str(exc))
 
                 if cancelar:
-                    cancelar_pedido(pedido_id)
-                    st.warning(f"Pedido da Mesa {mesa} cancelado.")
-                    st.rerun()
+                    try:
+                        cancelar_pedido(pedido_id)
+                        st.warning(f"Pedido da Mesa {mesa} cancelado.")
+                        st.rerun()
+                    except ValueError as exc:
+                        st.error(str(exc))

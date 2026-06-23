@@ -4,7 +4,7 @@ Cadastro e status visual das mesas.
 import streamlit as st
 
 from auth import requer_admin, sidebar_admin_status, sidebar_estilo
-from crud import criar_mesa, listar_mesas, listar_pedidos_abertos
+from crud import criar_mesa, liberar_mesa, listar_mesas, reservar_mesa
 
 st.set_page_config(page_title="Mesas", page_icon=":chair:", layout="wide")
 
@@ -17,8 +17,34 @@ sidebar_admin_status()
 st.title("Gestao de Mesas")
 
 mesas = listar_mesas()
-abertos = listar_pedidos_abertos()
-mesas_ocupadas = {pedido["mesa"] for pedido in abertos}
+
+STATUS_VISUAL = {
+    "livre": {
+        "label": "Livre",
+        "background": "#14532d",
+        "border": "#22c55e",
+    },
+    "ocupada": {
+        "label": "Ocupada",
+        "background": "#7f1d1d",
+        "border": "#dc2626",
+    },
+    "reservada": {
+        "label": "Reservada",
+        "background": "#713f12",
+        "border": "#f59e0b",
+    },
+    "aguardando_pagamento": {
+        "label": "Aguardando pagamento",
+        "background": "#1e3a8a",
+        "border": "#3b82f6",
+    },
+    "inativa": {
+        "label": "Inativa",
+        "background": "#374151",
+        "border": "#6b7280",
+    },
+}
 
 st.markdown("#### Status atual")
 
@@ -27,22 +53,34 @@ if not mesas:
 else:
     cols = st.columns(5)
     for i, mesa in enumerate(mesas):
-        ocupada = mesa["numero"] in mesas_ocupadas
         with cols[i % 5]:
-            label = "Ocupada" if ocupada else "Livre"
-            bg = "#7f1d1d" if ocupada else "#14532d"
-            borda = "#dc2626" if ocupada else "#22c55e"
+            status = mesa["status"]
+            visual = STATUS_VISUAL.get(status, STATUS_VISUAL["inativa"])
             st.markdown(
                 f"""
             <div style='text-align:center; padding:1rem; border-radius:10px;
-                        background:{bg}; border: 1px solid {borda};
+                        background:{visual['background']}; border: 1px solid {visual['border']};
                         margin-bottom:8px;'>
                 <div style='font-size:18px; font-weight:bold; color:#ffffff;'>Mesa {mesa['numero']}</div>
-                <div style='font-size:12px; color:#e5e7eb;'>{label}</div>
+                <div style='font-size:12px; color:#e5e7eb;'>{visual['label']}</div>
             </div>
             """,
                 unsafe_allow_html=True,
             )
+            if status == "livre":
+                if st.button("Reservar", key=f"reservar_{mesa['id']}", use_container_width=True):
+                    try:
+                        reservar_mesa(mesa["id"])
+                        st.rerun()
+                    except ValueError as exc:
+                        st.error(str(exc))
+            elif status == "reservada":
+                if st.button("Liberar", key=f"liberar_{mesa['id']}", use_container_width=True):
+                    try:
+                        liberar_mesa(mesa["id"])
+                        st.rerun()
+                    except ValueError as exc:
+                        st.error(str(exc))
 
 st.divider()
 

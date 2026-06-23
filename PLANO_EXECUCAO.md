@@ -32,7 +32,7 @@ Tarefas:
 - [x] Subir o projeto para o GitHub.
 - [x] Criar branch de desenvolvimento, se necessario.
 - [ ] Criar issues/tarefas iniciais no GitHub.
-- [ ] Manter `.env`, `venv/`, caches e arquivos temporarios fora do repositorio.
+- [x] Manter `.env`, `venv/`, caches e arquivos temporarios fora do repositorio.
 
 ## Fase 1 - Arrumar a Base Atual
 
@@ -51,8 +51,8 @@ Tarefas:
 - [x] Remover arquivo `.tmp` da raiz.
 - [x] Garantir que paginas administrativas estejam protegidas.
 - [x] Revisar `.env.example`.
-- [ ] Validar se o projeto roda do zero seguindo o README.
-- [ ] Criar um commit apenas com limpeza e organizacao.
+- [x] Validar se o projeto roda do zero seguindo o README.
+- [x] Criar um commit apenas com limpeza e organizacao.
 
 ## Fase 2 - Melhorar o Banco Para Comandas
 
@@ -60,20 +60,20 @@ Objetivo: preparar o modelo de dados para suportar a operacao real de comandas.
 
 Tarefas:
 
-- [ ] Adicionar status real para mesas:
-  - [ ] `livre`
-  - [ ] `ocupada`
-  - [ ] `reservada`
-  - [ ] `aguardando_pagamento`
-  - [ ] `inativa`
-- [ ] Impedir mais de um pedido aberto na mesma mesa.
-- [ ] Adicionar observacao geral no pedido.
-- [ ] Preparar campo para taxa de servico.
-- [ ] Melhorar status dos pedidos.
-- [ ] Preparar estrutura inicial para reservas.
-- [ ] Revisar queries impactadas pelas mudancas.
-- [ ] Atualizar `schema.sql`.
-- [ ] Testar criacao do banco do zero.
+- [x] Adicionar status real para mesas:
+  - [x] `livre`
+  - [x] `ocupada`
+  - [x] `reservada`
+  - [x] `aguardando_pagamento`
+  - [x] `inativa`
+- [x] Impedir mais de um pedido aberto na mesma mesa.
+- [x] Adicionar observacao geral no pedido.
+- [x] Preparar campo para taxa de servico.
+- [x] Melhorar status dos pedidos.
+- [x] Preparar estrutura inicial para reservas.
+- [x] Revisar queries impactadas pelas mudancas.
+- [x] Atualizar `schema.sql`.
+- [x] Testar criacao do banco do zero.
 
 ## Fase 3 - Tela Visual de Mesas
 

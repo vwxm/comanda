@@ -21,6 +21,7 @@ dist/
 
 # Streamlit/local app state
 .streamlit/secrets.toml
+.streamlit-*.log
 
 # Temporary files
 *.tmp
